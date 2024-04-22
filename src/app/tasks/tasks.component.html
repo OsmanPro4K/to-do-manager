@@ -1,0 +1,32 @@
+<!-- tasks.component.html -->
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <ul class="list-group" [ngClass]="{'text-white bg-dark': isDarkModeEnabled == true}">
+        <li
+          *ngFor="let task of tasks; let taskIndex = index"
+          class="list-group-item"
+          [ngClass]="{'text-white bg-dark': isDarkModeEnabled == true}"
+        >
+          <div class="d-flex justify-content-between align-items-center">
+            <p>{{ task }}</p>
+            <div>
+              <button
+                class="btn btn-warning"
+                (click)="onEditTaskClicked(task, taskIndex)"
+              >
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              <button
+                class="btn btn-outline-success ms-3"
+                (click)="onDeleteTaskClicked(taskIndex)"
+              >
+                <i class="fa-solid fa-check"></i>
+              </button>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,3 @@
+.text-white::placeholder {
+  color: #aaaaaa; /* Set your desired gray color for the placeholder */
+}

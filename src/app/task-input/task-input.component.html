@@ -1,0 +1,53 @@
+<div class="container mt-5 mb-3">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <form
+        (submit)="onAddTaskClicked($event, taskInput.value)"
+        *ngIf="showEditTask == false; else elseBlock"
+      >
+        <div
+          class="input-group"
+
+        >
+          <input
+            class="form-control border border-success"
+            [ngClass]="{'text-white bg-dark': isDarkModeEnabled == true}"
+            type="text"
+            placeholder="Enter task"
+            #taskInput
+          />
+          <button class="btn btn-success" type="submit">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+      </form>
+      <ng-template #elseBlock>
+        <form>
+          <div class="input-group">
+            <input
+              class="form-control border border-warning"
+              type="text"
+              placeholder="Edit Task"
+              [value]="taskThatNeedsEditing"
+              [ngClass]="{'text-white bg-dark': isDarkModeEnabled == true}"
+              #editTaskInput
+            />
+            <button
+              class="btn btn-success border border-warning"
+              type="submit"
+              (click)="onEditTaskConfirmedClicked($event, editTaskInput.value)"
+            >
+              <i class="fa-solid fa-check"></i>
+            </button>
+            <button
+              class="btn btn-danger border border-warning"
+              (click)="onCancelEditTaskClicked()"
+            >
+              <i class="fa-solid fa-x"></i>
+            </button>
+          </div>
+        </form>
+      </ng-template>
+    </div>
+  </div>
+</div>
