@@ -65,7 +65,7 @@ export class TaskInputComponent implements OnInit {
     this.backendService.getUser().subscribe(userInfo => {
       username = userInfo.username
     })
-    this.taskService.editTask(edittedTask, taskID).subscribe(
+    this.taskService.editTask(username, edittedTask, taskID).subscribe(
       () => {
         // Task added successfully, fetch updated tasks
         this.taskService.fetchTasks(username);

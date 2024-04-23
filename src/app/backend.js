@@ -90,11 +90,9 @@ app.get("/api/task", async (req, res) => {
     if (!existingUser) {
       return res.status(404).json({ message: "User not found!" });
     } else {
-      return res
-        .status(200)
-        .json({
-          message: "User found, here are the fetched tasks.",
-          fetchedTasks: existingUser.tasks
+      return res.status(200).json({
+        message: "User found, here are the fetched tasks.",
+        fetchedTasks: existingUser.tasks,
       });
     }
   } catch (error) {
@@ -103,7 +101,7 @@ app.get("/api/task", async (req, res) => {
   }
 });
 
-app.delete('/api/task', async (req, res) => {
+app.delete("/api/task", async (req, res) => {
   const { username, taskID } = req.query;
   try {
     // Update the user document to remove the task
@@ -124,7 +122,7 @@ app.delete('/api/task', async (req, res) => {
   }
 });
 
-app.post('/api/task-edit', async (req, res) => {
+app.post("/api/task-edit", async (req, res) => {
   const { username, editedTask, taskID } = req.body;
   console.log(username, editedTask, taskID);
   try {
@@ -132,10 +130,10 @@ app.post('/api/task-edit', async (req, res) => {
     const updatedTask = await Task.findOneAndUpdate(
       {
         username: username,
-        'tasks._id': taskID
+        "tasks._id": taskID,
       },
       {
-        $set: { 'tasks.$.task': editedTask }
+        $set: { "tasks.$.task": editedTask },
       },
       { new: true }
     );
@@ -144,32 +142,34 @@ app.post('/api/task-edit', async (req, res) => {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    return res.status(200).json({ message: "Task edited successfully", updatedTask: updatedTask });
+    return res
+      .status(200)
+      .json({ message: "Task edited successfully", updatedTask: updatedTask });
   } catch (error) {
     console.error("Error while editing task: ", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
-app.get('/api/all-users-tasks', async (req, res) => {
+app.get("/api/all-users-tasks", async (req, res) => {
   try {
     // Fetch all users with their corresponding tasks
     const allUsersTasks = await User.aggregate([
       {
         $lookup: {
-          from: 'tasks',
-          localField: 'username',
-          foreignField: 'username',
-          as: 'tasks',
+          from: "tasks",
+          localField: "username",
+          foreignField: "username",
+          as: "tasks",
         },
       },
     ]);
 
     console.log(allUsersTasks);
-    return res.status(200).json({allUsers: allUsersTasks });
+    return res.status(200).json({ allUsers: allUsersTasks });
   } catch (error) {
-    console.error('Error while fetching users and tasks:', error);
-    return res.status(500).json({ message: 'Internal Server Error' });
+    console.error("Error while fetching users and tasks:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 });
 

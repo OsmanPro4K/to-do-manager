@@ -41,7 +41,11 @@ export class TasksComponent implements OnInit {
   }
 
   onDeleteTaskClicked(taskID: number, taskIndex: number) {
-    this.taskService.deleteTask(taskID);
+    let username = '';
+    this.backendService.getUser().subscribe((userInfo) => {
+      username = userInfo.username;
+    });
+    this.taskService.deleteTask(username, taskID);
     this.tasks.splice(taskIndex, 1)
   }
 

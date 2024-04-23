@@ -102,14 +102,9 @@ export class TaskService {
     );
   }
 
-  editTask(editedTask: string, taskID: number): Observable<any> {
-    let username = '';
-    this.backendService.getUser().subscribe((user) => {
-      username = user.username;
-    });
+  editTask(username: string, editedTask: string, taskID: any): Observable<any> {
 
     console.log(username, editedTask, taskID);
-
 
     const url = 'http://localhost:3000/api/task-edit'
     const body = {username, editedTask, taskID}
@@ -120,19 +115,12 @@ export class TaskService {
     return this.http.post(url, body, { headers });;
   }
 
-  deleteTask(taskID: number) {
-    let username = '';
-    this.backendService.getUser().subscribe((userInfo) => {
-      username = userInfo.username;
-    });
-
+  deleteTask(username: string, taskID: any): Observable<any> {
     const url = `http://localhost:3000/api/task?username=${username}&taskID=${taskID}`;
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     });
 
-    this.http.delete(url, { headers }).subscribe((response) => {
-      console.log(response);
-    });
+    return this.http.delete(url, { headers });
   }
 }
