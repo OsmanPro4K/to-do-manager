@@ -1,7 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { HomeComponent } from './home/home.component';
+import { DatabaseComponent } from './database/database.component';
 
-const routes: Routes = [];
+// Define your route configurations
+const routes: Routes = [
+  { path: '', component: HomeComponent },
+  { path: 'view-DB', component: DatabaseComponent}
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

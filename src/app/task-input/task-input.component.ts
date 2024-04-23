@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { TaskService } from '../task.service';
+import { BackendService } from '../backend.service';
 
 @Component({
   selector: 'app-task-input',
@@ -10,12 +11,14 @@ export class TaskInputComponent implements OnInit {
   @ViewChild('taskInput', { static: false }) taskInput!: ElementRef;
   @ViewChild('editTaskInput', { static: false }) editTaskInput!: ElementRef;
 
+
   taskThatNeedsEditing: string = '';
 
   showEditTask: boolean = false;
   isDarkModeEnabled: boolean = false;
+  isEmpty: boolean = true;
 
-  constructor(private taskService: TaskService) {}
+  constructor(private taskService: TaskService, private backendService: BackendService) {}
   ngOnInit(): void {
     this.taskService.getShowEditInput().subscribe((booleanValue) => {
       this.showEditTask = booleanValue;
@@ -25,27 +28,52 @@ export class TaskInputComponent implements OnInit {
       this.isDarkModeEnabled = booleanValue;
     });
 
-    this.taskService.getTask().subscribe(task => {
-      this.taskThatNeedsEditing = task;
-    })
+    // this.taskService.getTask().subscribe(task => {
+    //   this.taskThatNeedsEditing = task;
+    // })
   }
 
   onAddTaskClicked(event: Event, task: string) {
     event.preventDefault();
 
-    this.taskService.addTask(task);
+    let username = '';
+    this.backendService.getUser().subscribe(userInfo => {
+      username = userInfo.username
+    })
+    this.taskService.addTask(task).subscribe(
+      () => {
+        // Task added successfully, fetch updated tasks
+        this.taskService.fetchTasks(username);
+      },
+      (error) => {
+        console.error('Error adding task:', error);
+      }
+    );
+
     this.taskInput.nativeElement.value = '';
   }
 
   onEditTaskConfirmedClicked(event: Event, edittedTask: string) {
     event.preventDefault();
-    let index!: number;
+    let taskID!: number;
 
-    this.taskService.getIndex().subscribe((newIndexNumber) => {
-      index = newIndexNumber;
+    this.taskService.getTaskID().subscribe((newID) => {
+      taskID = newID;
     });
 
-    this.taskService.editTask(index, edittedTask);
+    let username = '';
+    this.backendService.getUser().subscribe(userInfo => {
+      username = userInfo.username
+    })
+    this.taskService.editTask(edittedTask, taskID).subscribe(
+      () => {
+        // Task added successfully, fetch updated tasks
+        this.taskService.fetchTasks(username);
+      },
+      (error) => {
+        console.error('Error adding task:', error);
+      }
+    );;
     this.taskService.setShowEditInput(false);
 
     this.editTaskInput.nativeElement.value = '';
@@ -62,6 +90,14 @@ export class TaskInputComponent implements OnInit {
     }
     else {
       this.taskService.setEnableDarkMode(false)
+    }
+  }
+
+  isInputEmpty(inputValue: string) {
+    if (inputValue.length > 0) {
+      this.isEmpty = false;
+    } else {
+      this.isEmpty = true
     }
   }
 }

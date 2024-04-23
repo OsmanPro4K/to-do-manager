@@ -9,17 +9,17 @@
           [ngClass]="{'text-white bg-dark': isDarkModeEnabled == true}"
         >
           <div class="d-flex justify-content-between align-items-center">
-            <p>{{ task }}</p>
+            <p>{{ task.task }}</p>
             <div>
               <button
                 class="btn btn-warning"
-                (click)="onEditTaskClicked(task, taskIndex)"
+                (click)="onEditTaskClicked(task.task, taskIndex, task._id)"
               >
                 <i class="fa-solid fa-pen-to-square"></i>
               </button>
               <button
                 class="btn btn-outline-success ms-3"
-                (click)="onDeleteTaskClicked(taskIndex)"
+                (click)="onDeleteTaskClicked(task._id, taskIndex)"
               >
                 <i class="fa-solid fa-check"></i>
               </button>

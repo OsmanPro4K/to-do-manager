@@ -1,21 +1,30 @@
 import { EventEmitter, Injectable, Output } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { BackendService } from './backend.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { response } from 'express';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TaskService {
-  private tasks: string[] = [];
+  private taskID: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  private tasks: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   private task: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   private index: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
-  private showEditInput: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  private enableDarkMode: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  private showEditInput: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(false);
+  private enableDarkMode: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(false);
 
   @Output() updateTaskList = new EventEmitter<string[]>();
 
-  constructor() {}
+  constructor(
+    private backendService: BackendService,
+    private http: HttpClient
+  ) {}
 
   setShowEditInput(show: boolean) {
     this.showEditInput.next(show);
@@ -32,10 +41,17 @@ export class TaskService {
   }
 
   setIndex(newIndexNumber: number) {
-    this.index.next(newIndexNumber)
+    this.index.next(newIndexNumber);
   }
   getIndex() {
     return this.index;
+  }
+
+  setTaskID(taskId: number) {
+    this.taskID.next(taskId);
+  }
+  getTaskID() {
+    return this.taskID;
   }
 
   setTask(task: string) {
@@ -45,19 +61,78 @@ export class TaskService {
     return this.task;
   }
 
-  addTask(task: string) {
-    console.log('Im in TaskService!\n', task);
+  setTasks(tasks: string[]) {
+    console.log(tasks);
 
-    this.tasks.push(task);
-    this.updateTaskList.emit(this.tasks);
+    this.tasks.next(tasks);
+  }
+  getTasks(): Observable<string[]> {
+    return this.tasks.asObservable();
   }
 
-  editTask(index: number, editedTask: string) {
-    this.tasks[index] = editedTask;
+  addTask(task: string): Observable<any> {
+    let username = '';
+    this.backendService.getUser().subscribe((user) => {
+      username = user.username;
+    });
+
+    const url = 'http://localhost:3000/api/task';
+    const body = { username, task };
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    return this.http.post(url, body, { headers });
   }
 
-  deleteTask(index: number) {
-    this.tasks.splice(index, 1);
-    this.updateTaskList.emit(this.tasks)
+  fetchTasks(username: string): void {
+    const url = `http://localhost:3000/api/task?username=${username}`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    this.http.get(url, { headers }).subscribe(
+      (response: any) => {
+        console.log(response);
+        this.setTasks(response.fetchedTasks);
+      },
+      (error) => {
+        console.error('Error fetching tasks:', error);
+      }
+    );
+  }
+
+  editTask(editedTask: string, taskID: number): Observable<any> {
+    let username = '';
+    this.backendService.getUser().subscribe((user) => {
+      username = user.username;
+    });
+
+    console.log(username, editedTask, taskID);
+
+
+    const url = 'http://localhost:3000/api/task-edit'
+    const body = {username, editedTask, taskID}
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    return this.http.post(url, body, { headers });;
+  }
+
+  deleteTask(taskID: number) {
+    let username = '';
+    this.backendService.getUser().subscribe((userInfo) => {
+      username = userInfo.username;
+    });
+
+    const url = `http://localhost:3000/api/task?username=${username}&taskID=${taskID}`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+
+    this.http.delete(url, { headers }).subscribe((response) => {
+      console.log(response);
+    });
   }
 }

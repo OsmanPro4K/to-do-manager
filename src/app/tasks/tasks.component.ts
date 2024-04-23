@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TaskService } from '../task.service';
+import { BackendService } from '../backend.service';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-tasks',
@@ -7,14 +9,23 @@ import { TaskService } from '../task.service';
   styleUrls: ['./tasks.component.css'],
 })
 export class TasksComponent implements OnInit {
-  tasks: string[] = [];
+  tasks: {task: string, _id: number}[] = [];
   isDarkModeEnabled!: boolean;
 
-  constructor(private taskService: TaskService) {}
+  constructor(private taskService: TaskService, private backendService: BackendService) {}
 
   ngOnInit(): void {
-    this.taskService.updateTaskList.subscribe((updatedTaskList) => {
-      this.tasks = updatedTaskList;
+    let username = '';
+    this.backendService.getUser().subscribe(userInfo => {
+      username = userInfo.username;
+      this.taskService.fetchTasks(username); // Fetch tasks after getting the username
+    });
+
+    this.taskService.getTasks().subscribe((updatedTaskList: any) => {
+      console.log(updatedTaskList);
+      this.tasks = updatedTaskList
+      console.log(this.tasks);
+
     });
 
     this.taskService.getEnableDarkMode().subscribe((booleanValue) => {
@@ -22,14 +33,16 @@ export class TasksComponent implements OnInit {
     });
   }
 
-  onEditTaskClicked(task: string, taskIndex: number) {
+  onEditTaskClicked(task: string, taskIndex: number, taskID: number) {
     this.taskService.setShowEditInput(true);
     this.taskService.setIndex(taskIndex);
     this.taskService.setTask(task);
+    this.taskService.setTaskID(taskID)
   }
 
-  onDeleteTaskClicked(taskIndex: number) {
-    this.taskService.deleteTask(taskIndex);
+  onDeleteTaskClicked(taskID: number, taskIndex: number) {
+    this.taskService.deleteTask(taskID);
+    this.tasks.splice(taskIndex, 1)
   }
 
   toggleMode() {

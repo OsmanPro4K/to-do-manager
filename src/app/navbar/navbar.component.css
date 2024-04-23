@@ -1,0 +1,21 @@
+ul li a {
+  text-decoration: none; /* Remove the default underline */
+  position: relative; /* Required for positioning the pseudo-element */
+}
+
+ul li a::before {
+  content: ''; /* Create an empty pseudo-element */
+  position: absolute; /* Position it absolutely relative to its parent */
+  width: 0; /* Start with zero width */
+  height: 2px; /* Set the height of the underline */
+  background-color: gray; /* Set the color of the underline */
+  bottom: 0; /* Position it at the bottom of the link */
+  left: 50%; /* Position it at the center horizontally */
+  transform: translateX(-50%); /* Adjust horizontally to center */
+  transition: none; /* Disable transition for initial state */
+}
+
+ul li a:hover::before {
+  width: 100%; /* Expand the width to 100% on hover */
+  transition: width 0.3s ease; /* Smooth transition effect */
+}

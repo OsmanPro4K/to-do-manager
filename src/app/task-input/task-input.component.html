@@ -14,9 +14,10 @@
             [ngClass]="{'text-white bg-dark': isDarkModeEnabled == true}"
             type="text"
             placeholder="Enter task"
+            (input)="isInputEmpty(taskInput.value)"
             #taskInput
           />
-          <button class="btn btn-success" type="submit">
+          <button class="btn btn-success" [disabled]="isEmpty == true" type="submit">
             <i class="fa-solid fa-plus"></i>
           </button>
         </div>
@@ -29,12 +30,14 @@
               type="text"
               placeholder="Edit Task"
               [value]="taskThatNeedsEditing"
+              (input)="isInputEmpty(editTaskInput.value)"
               [ngClass]="{'text-white bg-dark': isDarkModeEnabled == true}"
               #editTaskInput
             />
             <button
               class="btn btn-success border border-warning"
               type="submit"
+              [disabled]="isEmpty == true"
               (click)="onEditTaskConfirmedClicked($event, editTaskInput.value)"
             >
               <i class="fa-solid fa-check"></i>

@@ -1,0 +1,54 @@
+<app-task-input></app-task-input>
+<app-tasks></app-tasks>
+
+<!-- Split dropup button -->
+<div class="btn-group dropup shadow-lg">
+  <button
+    type="button"
+    class="btn btn-secondary"
+    [ngClass]="{
+      'btn-light': isDarkModeEnabled == false,
+      'border border-dark': isDarkModeEnabled == false,
+      'btn-dark': isDarkModeEnabled == true,
+      'border border-light': isDarkModeEnabled == true,
+    }"
+  >
+    <span *ngIf="isDarkModeEnabled == false; else elseBlock">
+      <i class="fa-regular fa-sun"></i>
+    </span>
+    <ng-template #elseBlock>
+      <i class="fa-regular fa-moon"></i>
+    </ng-template>
+  </button>
+  <button
+    type="button"
+    class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+    [ngClass]="{
+      'btn-light': isDarkModeEnabled == false,
+      'btn-dark': isDarkModeEnabled == true,
+      'border border-dark': isDarkModeEnabled == false,
+      'border border-light': isDarkModeEnabled == true,
+    }"
+  >
+    <span class="visually-hidden">Toggle Dropdown</span>
+  </button>
+  <ul class="dropdown-menu menu">
+    <!-- Dropdown menu links -->
+    <li *ngIf="isDarkModeEnabled == false; else elseBlock2">
+      <a class="dropdown-item" (click)="toggleMode()">
+        <i class="fa-regular fa-moon fw-bold"></i> &nbsp;
+        <span class="fw-bold">Dark Mode</span>
+      </a>
+    </li>
+    <ng-template #elseBlock2>
+      <li>
+        <a class="dropdown-item" (click)="toggleMode()">
+          <i class="fa-regular fa-sun fw-bold"></i> &nbsp;
+          <span class="fw-bold">Light Mode</span>
+        </a>
+      </li>
+    </ng-template>
+  </ul>
+</div>
