@@ -1,41 +1,27 @@
 <nav class="navbar navbar-expand-lg shadow-sm">
   <div class="container-fluid">
-    <a
-      routerLink="/"
-      class="navbar-brand fw-bold"
-      [ngClass]="{
-        'text-white bg-dark': isDarkModeEnabled == true
-      }"
-    >
+    <a routerLink="/" class="navbar-brand fw-bold" [ngClass]="{'text-white bg-dark': isDarkModeEnabled == true}">
       To-Do List Manager
     </a>
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a
-          routerLink="/view-DB"
-          class="nav-link"
-          [ngClass]="{
-            'text-white bg-dark': isDarkModeEnabled == true
-          }"
-          >See what the DB looks like</a
-        >
-      </li>
-      <li class="ms-3 nav-item" *ngIf="isUserSigned == false; else elseBlock">
-        <app-signin></app-signin>
-      </li>
-      <ng-template #elseBlock>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <button
-            class="btn btn-info"
-            [ngClass]="{
-              'text-white': isDarkModeEnabled == true
-            }"
-            style="background: none"
-          >
-            Welcome {{ user.username }}!
-          </button>
+          <a routerLink="/view-DB" class="nav-link" [ngClass]="{'text-white bg-dark': isDarkModeEnabled == true}">See what the DB looks like</a>
         </li>
-      </ng-template>
-    </ul>
+        <li class="ms-3 nav-item" *ngIf="!isUserSigned; else elseBlock">
+          <app-signin></app-signin>
+        </li>
+        <ng-template #elseBlock>
+          <li class="nav-item">
+            <button class="btn btn-info" [ngClass]="{'text-white': isDarkModeEnabled == true}" style="background: none">
+              Welcome {{ user.username }}!
+            </button>
+          </li>
+        </ng-template>
+      </ul>
+    </div>
   </div>
 </nav>
